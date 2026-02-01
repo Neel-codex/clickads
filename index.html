@@ -1,859 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLICK ADS - Earn By Views Ads</title>
-    <script src='//libtl.com/sdk.js' data-zone='9528752' data-sdk='show_9528752'></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            overflow-x: hidden;
-            padding-bottom: 130px; /* Space for footer + sponsor ad */
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: calc(100vh - 130px);
-        }
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            animation: slideDown 0.6s ease-out;
-        }
-        .app-title {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .points-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        }
-        .points-value {
-            font-size: 28px;
-            font-weight: 700;
-        }
-        .points-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            animation: slideUp 0.6s ease-out;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-        }
-        .ads-viewer {
-            width: 100%;
-            height: 200px;
-            border: 2px dashed #ddd;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        .ads-placeholder {
-            text-align: center;
-            color: #666;
-        }
-        .ads-content {
-            display: none;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .timer-display {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        .btn:hover::before {
-            left: 100%;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            color: white;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-        }
-        .btn-secondary {
-            background: linear-gradient(45deg, #f44336, #d32f2f);
-            color: white;
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
-        }
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: white;
-        }
-        .conversion-info {
-            background: linear-gradient(45deg, #FF9800, #F57C00);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .referral-link {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 15px;
-            border: 2px dashed #ddd;
-            margin-bottom: 15px;
-            word-break: break-all;
-            font-family: monospace;
-            position: relative;
-        }
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .stat-item {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #667eea;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        .notification.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        .notification.error {
-            background: #f44336;
-        }
-        .notification.success {
-            background: #4CAF50;
-        }
-        /* Footer Navigation */
-        .footer-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-        .nav-container {
-            max-width: 400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px 0;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: #666;
-            min-width: 60px;
-        }
-        .nav-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            transform: translateY(-2px);
-        }
-        .nav-item.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        .nav-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-        .nav-label {
-            font-size: 12px;
-            font-weight: 600;
-        }
-        /* Sponsor Ad - Card Style */
-        .sponsor-ad {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            margin: 10px;
-            padding: 15px 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: slideUp 0.6s ease-out;
-        }
-        .sponsor-ad:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        .sponsor-ad a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .sponsor-ad a:hover {
-            color: #667eea;
-        }
-        .sponsor-ad .icon {
-            width: 28px;
-            height: 28px;
-            font-size: 14px;
-        }
-        /* Section visibility */
-        .section {
-            display: none;
-        }
-        .section.active {
-            display: block;
-        }
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .hidden {
-            display: none !important;
-        }
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .nav-label {
-                font-size: 10px;
-            }
-            .nav-icon {
-                font-size: 18px;
-            }
-            .sponsor-ad {
-                margin: 8px;
-                padding: 12px 15px;
-            }
-            .sponsor-ad a {
-                font-size: 14px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crypto Futures Scalp Pro • ATR Dynamic</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --yellow: #eab308;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.94rem;
+      line-height: 1.4;
+    }
+
+    header {
+      padding: 14px 16px;
+      background: var(--card);
+      text-align: center;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.42rem;
+      font-weight: 600;
+    }
+
+    #status {
+      margin-top: 6px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      padding: 12px 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: var(--card);
+      border-bottom: 1px solid #1f2937;
+    }
+
+    input, button, select {
+      padding: 9px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: white;
+    }
+
+    select { cursor: pointer; }
+
+    button {
+      background: var(--blue);
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    button:hover { opacity: 0.92; }
+
+    .market-trends {
+      padding: 12px 16px;
+      background: var(--card);
+      margin: 12px;
+      border-radius: 8px;
+    }
+
+    .trend-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .news-section {
+      padding: 12px 16px;
+      background: var(--card);
+      margin: 12px;
+      border-radius: 8px;
+    }
+
+    .news-item {
+      padding: 10px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .news-item a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .news-item a:hover { text-decoration: underline; }
+
+    .table-container {
+      padding: 0 12px 24px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: right;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    th {
+      background: #0f172a;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 0.76rem;
+    }
+
+    td:first-child {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background: rgba(59, 130, 246, 0.07);
+    }
+
+    .coin-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .coin-cell img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1f2937;
+    }
+
+    .strong-buy { background: rgba(16,185,129,0.11); color: var(--green); font-weight: 600; }
+    .buy       { color: var(--green); font-weight: 600; }
+    .sell      { color: var(--red);   font-weight: 600; }
+    .strong-sell { background: rgba(239,68,68,0.11); color: var(--red); font-weight: 600; }
+
+    .rr-good   { color: #6ee7b7; }
+    .rr-excellent { color: #34d399; font-weight: 600; }
+    .rr-warning { color: #fbbf24; }
+
+    .sentiment-bullish { color: var(--green); }
+    .sentiment-bearish { color: var(--red); }
+    .sentiment-neutral { color: var(--muted); }
+
+    @media (max-width: 768px) {
+      .controls { flex-direction: column; align-items: stretch; }
+      th, td { padding: 9px 8px; font-size: 0.82rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1 class="app-title">💰CLICK ADS APP</h1>
-            <div class="points-display">
-                <div>
-                    <div class="points-value" id="userPoints">0</div>
-                    <div class="points-label">Points</div>
-                </div>
-                <div>
-                    <div class="points-value" id="userUSDT">0.00</div>
-                    <div class="points-label">USDT</div>
-                </div>
-            </div>
-        </div>
-        <!-- Home Section -->
-        <div id="homeSection" class="section active">
-            <!-- Ads Viewer Section -->
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="icon">📺</span>
-                    Ads Viewer
-                </h2>
-                <div class="ads-viewer" id="adsViewer">
-                    <div class="ads-placeholder" id="adsPlaceholder">
-                        <div style="font-size: 48px; margin-bottom: 10px;">📺</div>
-                        <div>Click "Start Auto Ads" to begin earning!</div>
-                    </div>
-                    <div class="ads-content hidden" id="adsContent">
-                        <div>🎯 Viewing Advertisement...</div>
-                    </div>
-                    <div class="timer-display hidden" id="timerDisplay">30s</div>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn btn-primary" id="startAdsBtn">
-                        <span id="startBtnText">Start Auto Ads</span>
-                    </button>
-                    <button class="btn btn-secondary hidden" id="stopAdsBtn">
-                        Stop Auto Ads
-                    </button>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="adsWatched">0</div>
-                        <div class="stat-label">Ads Watched</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="pointsEarned">0</div>
-                        <div class="stat-label">Points Earned</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Withdrawal Section -->
-        <div id="withdrawSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="icon">💳</span>
-                    Withdraw USDT
-                </h2>
-                <div class="conversion-info">
-                    1000 Points = 1 USDT (TRC20)
-                </div>
-                <div class="input-group">
-                    <label class="input-label" for="withdrawPoints">Points to Withdraw</label>
-                    <input type="number" class="input-field" id="withdrawPoints" placeholder="Minimum 1000 points" min="1000" step="100">
-                </div>
-                <div class="input-group">
-                    <label class="input-label" for="tronAddress">USDT Address (TRC20)</label>
-                    <input type="text" class="input-field" id="tronAddress" placeholder="Enter your USDT (TRC20) wallet address">
-                </div>
-                <button class="btn btn-primary" id="withdrawBtn">
-                    <span id="withdrawBtnText">Withdraw USDT</span>
-                </button>
-            </div>
-        </div>
-        <!-- Referral Section -->
-        <div id="referralSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="icon">👥</span>
-                    Referral System
-                </h2>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="referralCount">0</div>
-                        <div class="stat-label">Referrals</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="referralPoints">0</div>
-                        <div class="stat-label">Referral Points</div>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label class="input-label">Your Referral Link</label>
-                    <div class="referral-link" id="referralLink">
-                        https://t.me/clickadsapp_bot?start=ref_USER123
-                        <button class="copy-btn" onclick="copyReferralLink()">Copy</button>
-                    </div>
-                </div>
-                <div style="font-size: 14px; color: #666; text-align: center;">
-                    Earn 15 points for each referral!
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer Navigation -->
-    <div class="footer-nav">
-        <!-- Sponsor Ad -->
-        <div class="sponsor-ad">
-            <a href="https://www.hhminer.online" target="_blank">
-                <span class="icon">💰</span>
-                <span>Buy Flash USDT Here</span>
-            </a>
-        </div>
-        <div class="nav-container">
-            <div class="nav-item active" onclick="showSection('home')">
-                <div class="nav-icon">🏠</div>
-                <div class="nav-label">Home</div>
-            </div>
-            <div class="nav-item" onclick="showSection('withdraw')">
-                <div class="nav-icon">💳</div>
-                <div class="nav-label">Withdraw</div>
-            </div>
-            <div class="nav-item" onclick="showSection('referral')">
-                <div class="nav-icon">👥</div>
-                <div class="nav-label">Referral</div>
-            </div>
-        </div>
-    </div>
-    <!-- Notification -->
-    <div class="notification" id="notification"></div>
-    <script>
-        // User data structure
-        let userData = {
-            points: 0,
-            adsWatched: 0,
-            referralCount: 0,
-            referralPoints: 0,
-            userId: 'USER' + Math.random().toString(36).substr(2, 9).toUpperCase()
-        };
-        // Auto ads variables
-        let autoAdsInterval = null;
-        let adTimer = null;
-        let currentAdTime = 30;
-        let isAutoAdsRunning = false;
-        // DOM elements
-        const userPointsEl = document.getElementById('userPoints');
-        const userUSDTEl = document.getElementById('userUSDT');
-        const adsWatchedEl = document.getElementById('adsWatched');
-        const pointsEarnedEl = document.getElementById('pointsEarned');
-        const referralCountEl = document.getElementById('referralCount');
-        const referralPointsEl = document.getElementById('referralPoints');
-        const startAdsBtn = document.getElementById('startAdsBtn');
-        const stopAdsBtn = document.getElementById('stopAdsBtn');
-        const adsViewer = document.getElementById('adsViewer');
-        const adsPlaceholder = document.getElementById('adsPlaceholder');
-        const adsContent = document.getElementById('adsContent');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const withdrawBtn = document.getElementById('withdrawBtn');
-        const referralLinkEl = document.getElementById('referralLink');
-        const notificationEl = document.getElementById('notification');
-        // Navigation function
-        function showSection(section) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            // Show selected section
-            document.getElementById(section + 'Section').classList.add('active');
-            event.target.closest('.nav-item').classList.add('active');
-        }
-        // Initialize app
-        function initApp() {
-            loadUserData();
-            updateUI();
-            updateReferralLink();
-            
-            // Check for referral parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const refId = urlParams.get('ref');
-            if (refId && refId !== userData.userId) {
-                processReferral(refId);
-            }
-        }
-        // Load user data from localStorage
-        function loadUserData() {
-            const saved = localStorage.getItem('monetag_user_data');
-            if (saved) {
-                userData = { ...userData, ...JSON.parse(saved) };
-            }
-        }
-        // Save user data to localStorage
-        function saveUserData() {
-            localStorage.setItem('monetag_user_data', JSON.stringify(userData));
-        }
-        // Update UI elements
-        function updateUI() {
-            userPointsEl.textContent = userData.points.toLocaleString();
-            userUSDTEl.textContent = (userData.points / 1000).toFixed(2);
-            adsWatchedEl.textContent = userData.adsWatched.toLocaleString();
-            pointsEarnedEl.textContent = userData.points.toLocaleString();
-            referralCountEl.textContent = userData.referralCount.toLocaleString();
-            referralPointsEl.textContent = userData.referralPoints.toLocaleString();
-        }
-        // Update referral link
-        function updateReferralLink() {
-            const link = `https://t.me/clickadsapp_bot?start=ref_${userData.userId}`;
-            referralLinkEl.innerHTML = `${link}<button class="copy-btn" onclick="copyReferralLink()">Copy</button>`;
-        }
-        // Start auto ads
-        function startAutoAds() {
-            if (isAutoAdsRunning) return;
-            
-            isAutoAdsRunning = true;
-            startAdsBtn.classList.add('hidden');
-            stopAdsBtn.classList.remove('hidden');
-            
-            showNotification('Auto ads started! Earning 10 points every 30 seconds', 'success');
-            
-            // Start the first ad immediately
-            showAd();
-            
-            // Set interval for subsequent ads
-            autoAdsInterval = setInterval(() => {
-                showAd();
-            }, 30000);
-        }
-        // Stop auto ads
-        function stopAutoAds() {
-            if (!isAutoAdsRunning) return;
-            
-            isAutoAdsRunning = false;
-            startAdsBtn.classList.remove('hidden');
-            stopAdsBtn.classList.add('hidden');
-            
-            clearInterval(autoAdsInterval);
-            clearInterval(adTimer);
-            
-            hideAd();
-            showNotification('Auto ads stopped', 'info');
-        }
-        // Show ad
-        function showAd() {
-            adsPlaceholder.classList.add('hidden');
-            adsContent.classList.remove('hidden');
-            timerDisplay.classList.remove('hidden');
-            
-            // Use the new SDK function
-            if (typeof show_9528752 === 'function') {
-                try {
-                    show_9528752().then(() => {
-                        // User watched ad till the end or closed it in interstitial format
-                        completeAd();
-                    }).catch(e => {
-                        // User got error during playing ad
-                        showNotification('Ad viewing failed or was skipped.', 'error');
-                        hideAd();
-                    });
-                } catch (e) {
-                    // Fallback if SDK fails
-                    setTimeout(() => {
-                        completeAd();
-                    }, 30000);
-                }
-            } else {
-                // Fallback simulation if SDK is not loaded
-                setTimeout(() => {
-                    completeAd();
-                }, 30000);
-            }
-            // Simulate timer for UI
-            currentAdTime = 30;
-            updateTimer();
-            adTimer = setInterval(() => {
-                currentAdTime--;
-                updateTimer();
-                if (currentAdTime <= 0) {
-                    clearInterval(adTimer);
-                }
-            }, 1000);
-        }
-        // Hide ad
-        function hideAd() {
-            adsPlaceholder.classList.remove('hidden');
-            adsContent.classList.add('hidden');
-            timerDisplay.classList.add('hidden');
-        }
-        // Update timer display
-        function updateTimer() {
-            timerDisplay.textContent = `${currentAdTime}s`;
-        }
-        // Complete ad and award points
-        function completeAd() {
-            userData.points += 10;
-            userData.adsWatched += 1;
-            
-            saveUserData();
-            updateUI();
-            
-            showNotification('+10 points earned! 🎉', 'success');
-            
-            if (isAutoAdsRunning) {
-                hideAd();
-                // Next ad will be shown by the interval
-            }
-        }
-        // Process withdrawal
-        function processWithdrawal() {
-            const withdrawPoints = parseInt(document.getElementById('withdrawPoints').value);
-            const tronAddress = document.getElementById('tronAddress').value.trim();
-            
-            if (!withdrawPoints || withdrawPoints < 1000) {
-                showNotification('Minimum withdrawal is 1000 points', 'error');
-                return;
-            }
-            
-            if (withdrawPoints > userData.points) {
-                showNotification('Insufficient points', 'error');
-                return;
-            }
-            
-            if (!tronAddress) {
-                showNotification('Please enter your USDT (TRC20) address', 'error');
-                return;
-            }
-            
-            // Simulate withdrawal processing
-            withdrawBtn.innerHTML = '<span class="loading"></span> Processing...';
-            withdrawBtn.disabled = true;
-            
-            setTimeout(() => {
-                userData.points -= withdrawPoints;
-                saveUserData();
-                updateUI();
-                
-                withdrawBtn.innerHTML = 'Withdraw USDT';
-                withdrawBtn.disabled = false;
-                
-                document.getElementById('withdrawPoints').value = '';
-                document.getElementById('tronAddress').value = '';
-                
-                const usdtAmount = (withdrawPoints / 1000).toFixed(2);
-                showNotification(`Withdrawal of ${usdtAmount} USDT initiated! 🚀`, 'success');
-            }, 2000);
-        }
-        // Process referral
-        function processReferral(refId) {
-            // Check if already processed this referral
-            const processedRefs = JSON.parse(localStorage.getItem('processed_referrals') || '[]');
-            if (processedRefs.includes(refId)) {
-                return;
-            }
-            
-            // Add referral points to the referrer (simulated)
-            userData.referralCount += 1;
-            userData.referralPoints += 15;
-            userData.points += 15;
-            
-            // Mark this referral as processed
-            processedRefs.push(refId);
-            localStorage.setItem('processed_referrals', JSON.stringify(processedRefs));
-            
-            saveUserData();
-            updateUI();
-            
-            showNotification('Welcome! You earned 15 bonus points! 🎁', 'success');
-        }
-        // Copy referral link
-        function copyReferralLink() {
-            const link = `https://t.me/clickadsapp_bot?start=ref_${userData.userId}`;
-            navigator.clipboard.writeText(link).then(() => {
-                showNotification('Referral link copied! 📋', 'success');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = link;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('Referral link copied! 📋', 'success');
-            });
-        }
-        // Show notification
-        function showNotification(message, type = 'info') {
-            notificationEl.textContent = message;
-            notificationEl.className = `notification show ${type}`;
-            
-            setTimeout(() => {
-                notificationEl.classList.remove('show');
-            }, 3000);
-        }
-        // Event listeners
-        startAdsBtn.addEventListener('click', startAutoAds);
-        stopAdsBtn.addEventListener('click', stopAutoAds);
-        withdrawBtn.addEventListener('click', processWithdrawal);
-        // Initialize app when page loads
-        document.addEventListener('DOMContentLoaded', initApp);
-        // Telegram WebApp integration (if available)
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
-    </script>
+
+<header>
+  <h1>Futures Scalp Pro • ATR Dynamic TP/SL</h1>
+  <div id="status">Loading signals...</div>
+</header>
+
+<div class="controls">
+  <select id="exchange">
+    <option value="binance">Binance Futures</option>
+    <option value="bybit">Bybit</option>
+    <option value="okx">OKX</option>
+  </select>
+  <input type="text" id="search" placeholder="Search symbol (e.g. BTCUSDT)…">
+  <button id="refresh">↻ Refresh</button>
+</div>
+
+<div class="market-trends">
+  <h2 style="font-size:1.1rem; margin:0 0 8px;">Market Overview</h2>
+  <div id="trends"></div>
+</div>
+
+<div class="table-container">
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Price</th>
+        <th>1h %</th>
+        <th>Vol 24h</th>
+        <th>RSI</th>
+        <th>ATR</th>
+        <th>Signal</th>
+        <th>Entry</th>
+        <th>TP1</th>
+        <th>TP2</th>
+        <th>SL</th>
+        <th>R:R</th>
+        <th>Sentiment</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="news-section">
+  <h2 style="font-size:1.1rem; margin:0 0 8px;">Latest News</h2>
+  <div id="news"></div>
+</div>
+
+<script>
+const EXCHANGES = {
+  binance: {
+    tickerUrl: 'https://fapi.binance.com/fapi/v1/ticker/24hr',
+    klinesUrl: sym => `https://fapi.binance.com/fapi/v1/klines?symbol=${sym}&interval=1m&limit=60`,
+    parse: t => ({
+      symbol: t.symbol,
+      price: parseFloat(t.lastPrice),
+      ch1h: parseFloat(t.priceChangePercent)/24 || 0,
+      ch24: parseFloat(t.priceChangePercent) || 0,
+      volume: parseFloat(t.quoteVolume) || 0,
+      image: `https://bin.bnbstatic.com/images/coin/${t.symbol.replace('USDT','').toLowerCase()}.png` || 'https://via.placeholder.com/22'
+    }),
+    filter: t => t.symbol.endsWith('USDT') && !t.symbol.includes('_')
+  },
+  bybit: {
+    tickerUrl: 'https://api.bybit.com/v5/market/tickers?category=linear',
+    klinesUrl: sym => `https://api.bybit.com/v5/market/kline?category=linear&symbol=${sym}&interval=1&limit=60`,
+    parse: t => ({
+      symbol: t.symbol,
+      price: parseFloat(t.lastPrice),
+      ch1h: parseFloat(t.price1hPcnt || 0),
+      ch24: parseFloat(t.price24hPcnt || 0),
+      volume: parseFloat(t.volume24h || 0),
+      image: 'https://via.placeholder.com/22'
+    }),
+    filter: () => true
+  },
+  okx: {
+    tickerUrl: 'https://www.okx.com/api/v5/market/tickers?instType=SWAP',
+    klinesUrl: sym => `https://www.okx.com/api/v5/market/candles?instId=${sym}&bar=1m&limit=60`,
+    parse: t => ({
+      symbol: t.instId.replace('-',''),
+      price: parseFloat(t.last),
+      ch1h: parseFloat(t.c24h)/24 || 0,
+      ch24: parseFloat(t.c24h || 0),
+      volume: parseFloat(t.volCcy24h || 0),
+      image: 'https://via.placeholder.com/22'
+    }),
+    filter: t => t.instId.endsWith('-USDT-SWAP')
+  }
+};
+
+const REFRESH_SEC = 30;
+const NEWS_API = 'https://api.coingecko.com/api/v3/news';
+const FNG_API = 'https://api.alternative.me/fng/?limit=1';
+
+function calculateRSI(closes, period = 14) {
+  if (closes.length < period + 1) return 50;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = closes[i] - closes[i-1];
+    if (diff > 0) gains += diff; else losses -= diff;
+  }
+  let avgG = gains / period;
+  let avgL = losses / period || 0.0001;
+  return 100 - (100 / (1 + avgG/avgL));
+}
+
+function calculateMACD(closes) {
+  function ema(arr, p) {
+    const k = 2 / (p + 1);
+    let em = arr[0];
+    for (let i = 1; i < arr.length; i++) em = arr[i] * k + em * (1 - k);
+    return em;
+  }
+  const ema12 = ema(closes.slice(-26), 12);
+  const ema26 = ema(closes.slice(-26), 26);
+  return ema12 - ema26;
+}
+
+function calculateATR(klines, period = 14) {
+  if (klines.length < period + 1) return 0;
+  let trs = [];
+  for (let i = 1; i < klines.length; i++) {
+    const h = klines[i][2], l = klines[i][3], pc = klines[i-1][4];
+    trs.push(Math.max(h - l, Math.abs(h - pc), Math.abs(l - pc)));
+  }
+  return trs.slice(-period).reduce((a,b)=>a+b,0) / period;
+}
+
+async function loadFNG() {
+  try {
+    const r = await fetch(FNG_API);
+    const d = await r.json();
+    const f = d.data[0];
+    document.getElementById('trends').innerHTML = `
+      <div class="trend-item"><span>Fear & Greed</span><span style="color:${f.value<40?'var(--red)':f.value>60?'var(--green)':'var(--yellow)'}">${f.value} (${f.value_classification})</span></div>
+      <div class="trend-item"><span>Trend</span><span>${f.value>60?'Uptrend':f.value<40?'Downtrend':'Neutral'}</span></div>
+    `;
+  } catch {}
+}
+
+async function loadNews() {
+  try {
+    const r = await fetch(NEWS_API);
+    const d = await r.json();
+    const nd = document.getElementById('news');
+    nd.innerHTML = '';
+    d.data.slice(0,5).forEach(n => {
+      const div = document.createElement('div');
+      div.className = 'news-item';
+      div.innerHTML = `<a href="${n.url}" target="_blank">${n.title}</a><p style="font-size:0.8rem;color:var(--muted);margin:4px 0;">${n.description?.slice(0,100)||''}...</p>`;
+      nd.appendChild(div);
+    });
+  } catch {}
+}
+
+async function loadData() {
+  const ex = document.getElementById('exchange').value;
+  const cfg = EXCHANGES[ex];
+  const status = document.getElementById('status');
+  status.textContent = `Loading ${ex} futures (${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})})…`;
+
+  loadFNG();
+  loadNews();
+
+  try {
+    const r = await fetch(cfg.tickerUrl);
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    let tickers = (data.result || data.data || data).filter(cfg.filter || (()=>true));
+
+    tickers.sort((a,b) => cfg.parse(b).volume - cfg.parse(a).volume);
+    const top = tickers.slice(0,50);
+
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+
+    for (const t of top) {
+      const item = cfg.parse(t);
+      const kr = await fetch(cfg.klinesUrl(item.symbol));
+      const kd = await kr.json();
+      const klines = (kd.result || kd.data || kd).map(k => [k[0],parseFloat(k[1]),parseFloat(k[2]),parseFloat(k[3]),parseFloat(k[4])]);
+
+      const closes = klines.map(k=>k[4]);
+      const rsi = calculateRSI(closes);
+      const macd = calculateMACD(closes);
+      const atr = calculateATR(klines);
+      const ch5m = closes.length >=6 ? (closes[closes.length-1] - closes[closes.length-6]) / closes[closes.length-6] * 100 : 0;
+
+      let signal = 'NEUTRAL', cls = '';
+      if (ch5m > 0.35 && rsi < 68 && macd > 0 && item.volume > 8e7) {
+        signal = 'STRONG BUY'; cls = 'strong-buy';
+      } else if (ch5m > 0.18 && rsi < 62 && macd > 0) {
+        signal = 'BUY'; cls = 'buy';
+      } else if (ch5m < -0.35 && rsi > 32 && macd < 0) {
+        signal = 'STRONG SELL'; cls = 'strong-sell';
+      } else if (ch5m < -0.18 && rsi > 38 && macd < 0) {
+        signal = 'SELL'; cls = 'sell';
+      }
+
+      if (signal === 'NEUTRAL') continue;
+
+      const entry = item.price;
+      const isLong = signal.includes('BUY');
+      const atrSL = 1.6 * atr;
+      const atrTP1 = 2.2 * atr;
+      const atrTP2 = 4.2 * atr;
+
+      let sl, tp1, tp2;
+      if (isLong) {
+        sl  = entry - atrSL;
+        tp1 = entry + atrTP1;
+        tp2 = entry + atrTP2;
+      } else {
+        sl  = entry + atrSL;
+        tp1 = entry - atrTP1;
+        tp2 = entry - atrTP2;
+      }
+
+      const risk = Math.abs(entry - sl);
+      const reward = Math.abs(tp2 - entry);
+      const rr = risk > 0 ? reward / risk : 0;
+
+      let rrCls = 'rr-good', rrTxt = rr.toFixed(1);
+      if (rr >= 2.6) rrCls = 'rr-excellent';
+      else if (rr < 1.6) rrCls = 'rr-warning';
+
+      const sentCls = (ch5m > 0.2 && rsi < 70 && macd > 0) ? 'sentiment-bullish' :
+                      (ch5m < -0.2 && rsi > 30 && macd < 0) ? 'sentiment-bearish' : 'sentiment-neutral';
+      const sentTxt = sentCls.includes('bullish') ? 'Bullish' : sentCls.includes('bearish') ? 'Bearish' : 'Neutral';
+
+      const tr = document.createElement('tr');
+      tr.className = cls;
+      tr.innerHTML = `
+        <td class="coin-cell">
+          <img src="${item.image}" alt onerror="this.src='https://via.placeholder.com/22'" loading="lazy">
+          <div>${item.symbol}</div>
+        </td>
+        <td>$${item.price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:6})}</td>
+        <td>${item.ch1h.toFixed(2)}%</td>
+        <td>$${Math.round(item.volume/1e6)}M</td>
+        <td>${rsi.toFixed(1)}</td>
+        <td>${atr.toFixed(4)}</td>
+        <td class="${cls}">${signal}</td>
+        <td>$${entry.toFixed(4)}</td>
+        <td class="rr-good">$${tp1.toFixed(4)}</td>
+        <td class="rr-excellent">$${tp2.toFixed(4)}</td>
+        <td style="color:var(--red);">$${sl.toFixed(4)}</td>
+        <td class="${rrCls}">${rrTxt}:1</td>
+        <td class="${sentCls}">${sentTxt}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    status.textContent = `${ex.toUpperCase()} • ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} • refresh ${REFRESH_SEC}s`;
+  } catch (e) {
+    status.textContent = 'Error loading data – try refresh';
+    console.error(e);
+  }
+}
+
+document.getElementById('exchange').onchange = loadData;
+document.getElementById('refresh').onclick = loadData;
+document.getElementById('search').oninput = e => {
+  const term = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('#tbody tr').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(term) ? '' : 'none';
+  });
+};
+
+window.onload = loadData;
+setInterval(loadData, REFRESH_SEC * 1000);
+</script>
 </body>
 </html>
