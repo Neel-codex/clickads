@@ -1,0 +1,33 @@
+# DogeHash Cloud Mining Platform - Apache configuration
+# Compatible with shared / cPanel hosting.
+
+# Use index.php as the default document.
+DirectoryIndex index.php index.html
+
+# Disable directory listing.
+Options -Indexes
+
+# Protect sensitive files.
+<FilesMatch "\.(sql|md|log|sample)$">
+  Require all denied
+</FilesMatch>
+
+# Block access to dotfiles (e.g. .git, .htaccess itself is handled by Apache).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Security headers.
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP settings (ignored if not allowed by host).
+<IfModule mod_php.c>
+  php_flag display_errors Off
+  php_value upload_max_filesize 5M
+  php_value post_max_size 6M
+</IfModule>
