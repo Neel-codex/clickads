@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/app/logout-button';
+import { LicenseCountdown } from '@/components/license/license-countdown';
 import { SUPPORT_TELEGRAM } from '@/lib/constants';
 import type { License, Profile } from '@/types/database';
 
@@ -69,7 +70,13 @@ export default async function ProfilePage() {
           <KeyRound className="size-4 text-primary" /> License
         </h2>
         {license ? (
-          <dl className="flex flex-col gap-2 text-sm">
+          <div className="flex flex-col gap-3">
+            <LicenseCountdown
+              expiresAt={license.expires_at}
+              isLifetime={license.is_lifetime}
+              variant="full"
+            />
+            <dl className="flex flex-col gap-2 text-sm">
             <Row label="Key" value={<span className="font-mono">{license.license_key}</span>} />
             <Row
               label="Status"
@@ -101,6 +108,7 @@ export default async function ProfilePage() {
               }
             />
           </dl>
+          </div>
         ) : (
           <div className="flex flex-col items-start gap-3">
             <p className="text-sm text-muted-foreground">No active license found.</p>
