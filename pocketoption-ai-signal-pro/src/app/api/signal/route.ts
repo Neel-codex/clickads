@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { fetchCandles } from '@/services/market-data';
+import { fetchBinanceCandles } from '@/services/binance';
 import { fetchOtcCandles } from '@/services/otc-provider';
 import { generateSignal } from '@/lib/analysis';
 import { TIMEFRAMES, type TimeframeValue } from '@/lib/constants';
@@ -55,6 +56,12 @@ export async function GET(request: NextRequest) {
         );
       }
       candles = otc.candles;
+    } else if (asset.data_provider === 'binance') {
+      const result = await fetchBinanceCandles(
+        asset.provider_symbol ?? asset.symbol,
+        timeframe,
+      );
+      candles = result.candles;
     } else {
       const result = await fetchCandles(asset.provider_symbol ?? asset.symbol, timeframe);
       candles = result.candles;

@@ -112,6 +112,16 @@ Each piece of evidence has a direction and weight. The engine produces a `buy` /
 
 OTC pairs do **not** use Yahoo data — they route through the configurable OTC provider layer, which honestly reports "live OTC data unavailable" until an admin assigns a working provider.
 
+## Market data providers
+
+| Asset type | Provider | Notes |
+|------------|----------|-------|
+| Forex, indices, commodities | Yahoo Finance (public) | No API key |
+| Crypto | Binance public data (`data-api.binance.vision`) | No API key. Uses the data host, **not** `api.binance.com`, which returns HTTP 451 from US IPs (e.g. Vercel iad1). Override with `BINANCE_BASE_URL`. |
+| OTC | Configurable provider layer | Reports "unavailable" until an admin assigns a source |
+
+Routing is decided per-asset by the `assets.data_provider` column (`yahoo` / `binance` / `otc_custom`). The seed includes all major/minor/exotic forex pairs, ~30 crypto pairs, plus indices and commodities. Existing databases can run `supabase/migrations/0004_markets_expansion.sql` to add them.
+
 ---
 
 ## Deploying to Vercel
