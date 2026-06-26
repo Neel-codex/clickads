@@ -33,9 +33,19 @@ export default async function ProfilePage() {
     .limit(1)
     .maybeSingle<License>();
 
+  const isAdmin = profile && ['admin', 'super_admin'].includes(profile.role);
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-bold">Profile</h1>
+
+      {isAdmin && (
+        <Link href="/admin">
+          <Button className="w-full">
+            <Shield className="size-4" /> Open Admin Console
+          </Button>
+        </Link>
+      )}
 
       <Card>
         <div className="flex items-center gap-3">
