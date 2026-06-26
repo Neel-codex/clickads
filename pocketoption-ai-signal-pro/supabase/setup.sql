@@ -1,7 +1,7 @@
 -- =============================================================
 -- PocketOption AI Signal Pro - COMBINED SETUP
 -- Run this entire file once in the Supabase SQL Editor.
--- It applies schema -> functions/triggers -> RLS -> seed in order.
+-- Applies schema -> functions/triggers -> RLS -> seed (full markets).
 -- Idempotent: safe to re-run.
 -- =============================================================
 
@@ -505,55 +505,155 @@ drop policy if exists "activity_logs admin all" on public.activity_logs;
 create policy "activity_logs admin all" on public.activity_logs
   for all using (public.is_admin()) with check (public.is_admin());
 
--- >>> seed.sql >>>
+-- >>> seed.sql (full forex + Binance crypto + indices/commodities) >>>
 -- =====================================================================
--- Seed data: core assets + default settings.
--- Safe to run multiple times (idempotent upserts on unique symbol/key).
+-- Seed data: assets (forex via Yahoo, crypto via Binance) + settings.
+-- Idempotent: safe to run multiple times (upsert on unique symbol/key).
+-- Crypto uses Binance public data (data-api.binance.vision); no API key.
 -- =====================================================================
 
+-- ---------------------------------------------------------------------
+-- FOREX (provider: yahoo). Yahoo symbol = <PAIR>=X.
+-- ---------------------------------------------------------------------
 insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
 values
-  -- Major forex
-  ('EURUSD', 'EURUSD=X', 'Euro / US Dollar',        'major_forex', 'yahoo', 5, 1),
-  ('GBPUSD', 'GBPUSD=X', 'British Pound / US Dollar','major_forex', 'yahoo', 5, 2),
-  ('USDJPY', 'USDJPY=X', 'US Dollar / Yen',          'major_forex', 'yahoo', 3, 3),
-  ('USDCHF', 'USDCHF=X', 'US Dollar / Swiss Franc',  'major_forex', 'yahoo', 5, 4),
-  ('AUDUSD', 'AUDUSD=X', 'Australian / US Dollar',   'major_forex', 'yahoo', 5, 5),
-  ('USDCAD', 'USDCAD=X', 'US Dollar / Canadian',     'major_forex', 'yahoo', 5, 6),
-  -- Minor forex
-  ('EURGBP', 'EURGBP=X', 'Euro / British Pound',     'minor_forex', 'yahoo', 5, 10),
-  ('EURJPY', 'EURJPY=X', 'Euro / Yen',               'minor_forex', 'yahoo', 3, 11),
-  ('GBPJPY', 'GBPJPY=X', 'Pound / Yen',              'minor_forex', 'yahoo', 3, 12),
-  -- Exotic forex
-  ('USDTRY', 'USDTRY=X', 'US Dollar / Turkish Lira', 'exotic_forex','yahoo', 4, 20),
-  ('USDZAR', 'USDZAR=X', 'US Dollar / Rand',         'exotic_forex','yahoo', 4, 21),
-  -- Crypto
-  ('BTCUSD', 'BTC-USD',  'Bitcoin / US Dollar',      'crypto',      'yahoo', 2, 30),
-  ('ETHUSD', 'ETH-USD',  'Ethereum / US Dollar',     'crypto',      'yahoo', 2, 31),
-  ('SOLUSD', 'SOL-USD',  'Solana / US Dollar',       'crypto',      'yahoo', 3, 32),
-  -- Indices
-  ('SPX',    '^GSPC',    'S&P 500',                  'indices',     'yahoo', 2, 40),
-  ('NDX',    '^NDX',     'Nasdaq 100',               'indices',     'yahoo', 2, 41),
-  ('DJI',    '^DJI',     'Dow Jones 30',             'indices',     'yahoo', 2, 42),
-  -- Commodities
-  ('XAUUSD', 'GC=F',     'Gold',                     'commodities', 'yahoo', 2, 50),
-  ('XAGUSD', 'SI=F',     'Silver',                   'commodities', 'yahoo', 3, 51),
-  ('WTI',    'CL=F',     'Crude Oil WTI',            'commodities', 'yahoo', 2, 52)
+  -- Majors
+  ('EURUSD','EURUSD=X','Euro / US Dollar','major_forex','yahoo',5,1),
+  ('GBPUSD','GBPUSD=X','British Pound / US Dollar','major_forex','yahoo',5,2),
+  ('USDJPY','USDJPY=X','US Dollar / Japanese Yen','major_forex','yahoo',3,3),
+  ('USDCHF','USDCHF=X','US Dollar / Swiss Franc','major_forex','yahoo',5,4),
+  ('AUDUSD','AUDUSD=X','Australian Dollar / US Dollar','major_forex','yahoo',5,5),
+  ('USDCAD','USDCAD=X','US Dollar / Canadian Dollar','major_forex','yahoo',5,6),
+  ('NZDUSD','NZDUSD=X','New Zealand Dollar / US Dollar','major_forex','yahoo',5,7),
+  -- Minors / crosses
+  ('EURGBP','EURGBP=X','Euro / British Pound','minor_forex','yahoo',5,10),
+  ('EURJPY','EURJPY=X','Euro / Japanese Yen','minor_forex','yahoo',3,11),
+  ('EURCHF','EURCHF=X','Euro / Swiss Franc','minor_forex','yahoo',5,12),
+  ('EURAUD','EURAUD=X','Euro / Australian Dollar','minor_forex','yahoo',5,13),
+  ('EURCAD','EURCAD=X','Euro / Canadian Dollar','minor_forex','yahoo',5,14),
+  ('EURNZD','EURNZD=X','Euro / New Zealand Dollar','minor_forex','yahoo',5,15),
+  ('GBPJPY','GBPJPY=X','British Pound / Japanese Yen','minor_forex','yahoo',3,16),
+  ('GBPCHF','GBPCHF=X','British Pound / Swiss Franc','minor_forex','yahoo',5,17),
+  ('GBPAUD','GBPAUD=X','British Pound / Australian Dollar','minor_forex','yahoo',5,18),
+  ('GBPCAD','GBPCAD=X','British Pound / Canadian Dollar','minor_forex','yahoo',5,19),
+  ('GBPNZD','GBPNZD=X','British Pound / New Zealand Dollar','minor_forex','yahoo',5,20),
+  ('AUDJPY','AUDJPY=X','Australian Dollar / Japanese Yen','minor_forex','yahoo',3,21),
+  ('AUDCHF','AUDCHF=X','Australian Dollar / Swiss Franc','minor_forex','yahoo',5,22),
+  ('AUDCAD','AUDCAD=X','Australian Dollar / Canadian Dollar','minor_forex','yahoo',5,23),
+  ('AUDNZD','AUDNZD=X','Australian Dollar / New Zealand Dollar','minor_forex','yahoo',5,24),
+  ('NZDJPY','NZDJPY=X','New Zealand Dollar / Japanese Yen','minor_forex','yahoo',3,25),
+  ('NZDCHF','NZDCHF=X','New Zealand Dollar / Swiss Franc','minor_forex','yahoo',5,26),
+  ('NZDCAD','NZDCAD=X','New Zealand Dollar / Canadian Dollar','minor_forex','yahoo',5,27),
+  ('CADJPY','CADJPY=X','Canadian Dollar / Japanese Yen','minor_forex','yahoo',3,28),
+  ('CADCHF','CADCHF=X','Canadian Dollar / Swiss Franc','minor_forex','yahoo',5,29),
+  ('CHFJPY','CHFJPY=X','Swiss Franc / Japanese Yen','minor_forex','yahoo',3,30),
+  -- Exotics
+  ('USDTRY','USDTRY=X','US Dollar / Turkish Lira','exotic_forex','yahoo',4,40),
+  ('USDZAR','USDZAR=X','US Dollar / South African Rand','exotic_forex','yahoo',4,41),
+  ('USDMXN','USDMXN=X','US Dollar / Mexican Peso','exotic_forex','yahoo',4,42),
+  ('USDSGD','USDSGD=X','US Dollar / Singapore Dollar','exotic_forex','yahoo',5,43),
+  ('USDHKD','USDHKD=X','US Dollar / Hong Kong Dollar','exotic_forex','yahoo',4,44),
+  ('USDSEK','USDSEK=X','US Dollar / Swedish Krona','exotic_forex','yahoo',4,45),
+  ('USDNOK','USDNOK=X','US Dollar / Norwegian Krone','exotic_forex','yahoo',4,46),
+  ('USDDKK','USDDKK=X','US Dollar / Danish Krone','exotic_forex','yahoo',4,47),
+  ('USDPLN','USDPLN=X','US Dollar / Polish Zloty','exotic_forex','yahoo',4,48),
+  ('USDHUF','USDHUF=X','US Dollar / Hungarian Forint','exotic_forex','yahoo',3,49),
+  ('USDCZK','USDCZK=X','US Dollar / Czech Koruna','exotic_forex','yahoo',4,50),
+  ('USDINR','USDINR=X','US Dollar / Indian Rupee','exotic_forex','yahoo',3,51),
+  ('USDTHB','USDTHB=X','US Dollar / Thai Baht','exotic_forex','yahoo',3,52),
+  ('USDCNH','USDCNH=X','US Dollar / Chinese Yuan (offshore)','exotic_forex','yahoo',4,53),
+  ('EURTRY','EURTRY=X','Euro / Turkish Lira','exotic_forex','yahoo',4,54),
+  ('EURPLN','EURPLN=X','Euro / Polish Zloty','exotic_forex','yahoo',4,55),
+  ('EURSEK','EURSEK=X','Euro / Swedish Krona','exotic_forex','yahoo',4,56),
+  ('EURNOK','EURNOK=X','Euro / Norwegian Krone','exotic_forex','yahoo',4,57),
+  ('GBPTRY','GBPTRY=X','British Pound / Turkish Lira','exotic_forex','yahoo',4,58)
 on conflict (symbol) do update
-  set name = excluded.name,
-      provider_symbol = excluded.provider_symbol,
-      category = excluded.category;
+  set provider_symbol = excluded.provider_symbol,
+      name = excluded.name,
+      category = excluded.category,
+      data_provider = excluded.data_provider,
+      price_precision = excluded.price_precision;
 
+-- ---------------------------------------------------------------------
+-- CRYPTO (provider: binance). Internal symbol = <COIN>USD, Binance = <COIN>USDT.
+-- ---------------------------------------------------------------------
+insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
+values
+  ('BTCUSD','BTCUSDT','Bitcoin / USDT','crypto','binance',2,100),
+  ('ETHUSD','ETHUSDT','Ethereum / USDT','crypto','binance',2,101),
+  ('BNBUSD','BNBUSDT','BNB / USDT','crypto','binance',2,102),
+  ('SOLUSD','SOLUSDT','Solana / USDT','crypto','binance',3,103),
+  ('XRPUSD','XRPUSDT','XRP / USDT','crypto','binance',5,104),
+  ('ADAUSD','ADAUSDT','Cardano / USDT','crypto','binance',5,105),
+  ('DOGEUSD','DOGEUSDT','Dogecoin / USDT','crypto','binance',6,106),
+  ('AVAXUSD','AVAXUSDT','Avalanche / USDT','crypto','binance',3,107),
+  ('DOTUSD','DOTUSDT','Polkadot / USDT','crypto','binance',4,108),
+  ('LINKUSD','LINKUSDT','Chainlink / USDT','crypto','binance',3,109),
+  ('LTCUSD','LTCUSDT','Litecoin / USDT','crypto','binance',2,110),
+  ('BCHUSD','BCHUSDT','Bitcoin Cash / USDT','crypto','binance',2,111),
+  ('TRXUSD','TRXUSDT','TRON / USDT','crypto','binance',6,112),
+  ('UNIUSD','UNIUSDT','Uniswap / USDT','crypto','binance',4,113),
+  ('ATOMUSD','ATOMUSDT','Cosmos / USDT','crypto','binance',4,114),
+  ('ETCUSD','ETCUSDT','Ethereum Classic / USDT','crypto','binance',3,115),
+  ('XLMUSD','XLMUSDT','Stellar / USDT','crypto','binance',5,116),
+  ('NEARUSD','NEARUSDT','NEAR Protocol / USDT','crypto','binance',4,117),
+  ('APTUSD','APTUSDT','Aptos / USDT','crypto','binance',4,118),
+  ('ARBUSD','ARBUSDT','Arbitrum / USDT','crypto','binance',4,119),
+  ('OPUSD','OPUSDT','Optimism / USDT','crypto','binance',4,120),
+  ('FILUSD','FILUSDT','Filecoin / USDT','crypto','binance',4,121),
+  ('INJUSD','INJUSDT','Injective / USDT','crypto','binance',3,122),
+  ('SUIUSD','SUIUSDT','Sui / USDT','crypto','binance',4,123),
+  ('TONUSD','TONUSDT','Toncoin / USDT','crypto','binance',4,124),
+  ('ICPUSD','ICPUSDT','Internet Computer / USDT','crypto','binance',3,125),
+  ('AAVEUSD','AAVEUSDT','Aave / USDT','crypto','binance',2,126),
+  ('SANDUSD','SANDUSDT','The Sandbox / USDT','crypto','binance',5,127),
+  ('PEPEUSD','PEPEUSDT','Pepe / USDT','crypto','binance',8,128),
+  ('SHIBUSD','SHIBUSDT','Shiba Inu / USDT','crypto','binance',8,129)
+on conflict (symbol) do update
+  set provider_symbol = excluded.provider_symbol,
+      name = excluded.name,
+      category = excluded.category,
+      data_provider = excluded.data_provider,
+      price_precision = excluded.price_precision;
+
+-- ---------------------------------------------------------------------
+-- INDICES & COMMODITIES (provider: yahoo).
+-- ---------------------------------------------------------------------
+insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
+values
+  ('SPX','^GSPC','S&P 500','indices','yahoo',2,200),
+  ('NDX','^NDX','Nasdaq 100','indices','yahoo',2,201),
+  ('DJI','^DJI','Dow Jones 30','indices','yahoo',2,202),
+  ('FTSE','^FTSE','FTSE 100','indices','yahoo',2,203),
+  ('DAX','^GDAXI','DAX 40','indices','yahoo',2,204),
+  ('N225','^N225','Nikkei 225','indices','yahoo',2,205),
+  ('XAUUSD','GC=F','Gold','commodities','yahoo',2,220),
+  ('XAGUSD','SI=F','Silver','commodities','yahoo',3,221),
+  ('WTI','CL=F','Crude Oil WTI','commodities','yahoo',2,222),
+  ('BRENT','BZ=F','Brent Crude Oil','commodities','yahoo',2,223),
+  ('NATGAS','NG=F','Natural Gas','commodities','yahoo',3,224)
+on conflict (symbol) do update
+  set provider_symbol = excluded.provider_symbol,
+      name = excluded.name,
+      category = excluded.category,
+      data_provider = excluded.data_provider,
+      price_precision = excluded.price_precision;
+
+-- ---------------------------------------------------------------------
 -- Example OTC pair (disabled until an admin assigns a data provider).
+-- ---------------------------------------------------------------------
 insert into public.assets
   (symbol, name, category, is_otc, is_enabled, data_provider, price_precision, sort_order, otc_refresh_ms, otc_sessions)
 values
-  ('EURUSD-OTC', 'EUR/USD OTC', 'otc', true, false, 'otc_custom', 5, 60,
+  ('EURUSD-OTC', 'EUR/USD OTC', 'otc', true, false, 'otc_custom', 5, 300,
    5000, '[{"day":"sat","open":"00:00","close":"23:59"},{"day":"sun","open":"00:00","close":"23:59"}]'::jsonb)
 on conflict (symbol) do nothing;
 
+-- ---------------------------------------------------------------------
+-- Default settings.
+-- ---------------------------------------------------------------------
 insert into public.settings (key, value) values
   ('signal_engine', '{"min_confidence":55,"max_signals_per_minute":12}'::jsonb),
-  ('market_data',   '{"refresh_seconds":5,"provider":"yahoo"}'::jsonb),
+  ('market_data',   '{"refresh_seconds":5,"forex_provider":"yahoo","crypto_provider":"binance"}'::jsonb),
   ('branding',      '{"support_telegram":"@devtech77"}'::jsonb)
 on conflict (key) do nothing;

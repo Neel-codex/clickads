@@ -1,15 +1,14 @@
 -- =====================================================================
--- Seed data: assets (forex via Yahoo, crypto via Binance) + settings.
--- Idempotent: safe to run multiple times (upsert on unique symbol/key).
--- Crypto uses Binance public data (data-api.binance.vision); no API key.
+-- 0004 - Markets expansion
+-- Adds the full set of forex pairs, indices & commodities (Yahoo) and a broad
+-- set of crypto pairs served by the Binance public data API.
+-- Run this once on an EXISTING database (fresh installs get it via seed.sql).
+-- Idempotent: re-running only updates provider/name/category.
 -- =====================================================================
 
--- ---------------------------------------------------------------------
--- FOREX (provider: yahoo). Yahoo symbol = <PAIR>=X.
--- ---------------------------------------------------------------------
+-- FOREX (provider: yahoo)
 insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
 values
-  -- Majors
   ('EURUSD','EURUSD=X','Euro / US Dollar','major_forex','yahoo',5,1),
   ('GBPUSD','GBPUSD=X','British Pound / US Dollar','major_forex','yahoo',5,2),
   ('USDJPY','USDJPY=X','US Dollar / Japanese Yen','major_forex','yahoo',3,3),
@@ -17,7 +16,6 @@ values
   ('AUDUSD','AUDUSD=X','Australian Dollar / US Dollar','major_forex','yahoo',5,5),
   ('USDCAD','USDCAD=X','US Dollar / Canadian Dollar','major_forex','yahoo',5,6),
   ('NZDUSD','NZDUSD=X','New Zealand Dollar / US Dollar','major_forex','yahoo',5,7),
-  -- Minors / crosses
   ('EURGBP','EURGBP=X','Euro / British Pound','minor_forex','yahoo',5,10),
   ('EURJPY','EURJPY=X','Euro / Japanese Yen','minor_forex','yahoo',3,11),
   ('EURCHF','EURCHF=X','Euro / Swiss Franc','minor_forex','yahoo',5,12),
@@ -39,7 +37,6 @@ values
   ('CADJPY','CADJPY=X','Canadian Dollar / Japanese Yen','minor_forex','yahoo',3,28),
   ('CADCHF','CADCHF=X','Canadian Dollar / Swiss Franc','minor_forex','yahoo',5,29),
   ('CHFJPY','CHFJPY=X','Swiss Franc / Japanese Yen','minor_forex','yahoo',3,30),
-  -- Exotics
   ('USDTRY','USDTRY=X','US Dollar / Turkish Lira','exotic_forex','yahoo',4,40),
   ('USDZAR','USDZAR=X','US Dollar / South African Rand','exotic_forex','yahoo',4,41),
   ('USDMXN','USDMXN=X','US Dollar / Mexican Peso','exotic_forex','yahoo',4,42),
@@ -60,15 +57,12 @@ values
   ('EURNOK','EURNOK=X','Euro / Norwegian Krone','exotic_forex','yahoo',4,57),
   ('GBPTRY','GBPTRY=X','British Pound / Turkish Lira','exotic_forex','yahoo',4,58)
 on conflict (symbol) do update
-  set provider_symbol = excluded.provider_symbol,
-      name = excluded.name,
-      category = excluded.category,
-      data_provider = excluded.data_provider,
+  set provider_symbol = excluded.provider_symbol, name = excluded.name,
+      category = excluded.category, data_provider = excluded.data_provider,
       price_precision = excluded.price_precision;
 
--- ---------------------------------------------------------------------
--- CRYPTO (provider: binance). Internal symbol = <COIN>USD, Binance = <COIN>USDT.
--- ---------------------------------------------------------------------
+-- CRYPTO (provider: binance) - internal <COIN>USD maps to Binance <COIN>USDT.
+-- This also migrates any pre-existing crypto rows from yahoo to binance.
 insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
 values
   ('BTCUSD','BTCUSDT','Bitcoin / USDT','crypto','binance',2,100),
@@ -102,15 +96,11 @@ values
   ('PEPEUSD','PEPEUSDT','Pepe / USDT','crypto','binance',8,128),
   ('SHIBUSD','SHIBUSDT','Shiba Inu / USDT','crypto','binance',8,129)
 on conflict (symbol) do update
-  set provider_symbol = excluded.provider_symbol,
-      name = excluded.name,
-      category = excluded.category,
-      data_provider = excluded.data_provider,
+  set provider_symbol = excluded.provider_symbol, name = excluded.name,
+      category = excluded.category, data_provider = excluded.data_provider,
       price_precision = excluded.price_precision;
 
--- ---------------------------------------------------------------------
--- INDICES & COMMODITIES (provider: yahoo).
--- ---------------------------------------------------------------------
+-- INDICES & COMMODITIES (provider: yahoo)
 insert into public.assets (symbol, provider_symbol, name, category, data_provider, price_precision, sort_order)
 values
   ('SPX','^GSPC','S&P 500','indices','yahoo',2,200),
@@ -125,27 +115,6 @@ values
   ('BRENT','BZ=F','Brent Crude Oil','commodities','yahoo',2,223),
   ('NATGAS','NG=F','Natural Gas','commodities','yahoo',3,224)
 on conflict (symbol) do update
-  set provider_symbol = excluded.provider_symbol,
-      name = excluded.name,
-      category = excluded.category,
-      data_provider = excluded.data_provider,
+  set provider_symbol = excluded.provider_symbol, name = excluded.name,
+      category = excluded.category, data_provider = excluded.data_provider,
       price_precision = excluded.price_precision;
-
--- ---------------------------------------------------------------------
--- Example OTC pair (disabled until an admin assigns a data provider).
--- ---------------------------------------------------------------------
-insert into public.assets
-  (symbol, name, category, is_otc, is_enabled, data_provider, price_precision, sort_order, otc_refresh_ms, otc_sessions)
-values
-  ('EURUSD-OTC', 'EUR/USD OTC', 'otc', true, false, 'otc_custom', 5, 300,
-   5000, '[{"day":"sat","open":"00:00","close":"23:59"},{"day":"sun","open":"00:00","close":"23:59"}]'::jsonb)
-on conflict (symbol) do nothing;
-
--- ---------------------------------------------------------------------
--- Default settings.
--- ---------------------------------------------------------------------
-insert into public.settings (key, value) values
-  ('signal_engine', '{"min_confidence":55,"max_signals_per_minute":12}'::jsonb),
-  ('market_data',   '{"refresh_seconds":5,"forex_provider":"yahoo","crypto_provider":"binance"}'::jsonb),
-  ('branding',      '{"support_telegram":"@devtech77"}'::jsonb)
-on conflict (key) do nothing;
