@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
+import { AiBrainLogo } from '@/components/brand/ai-brain-logo';
 
 /** Shared centered shell for auth screens. */
 export function AuthShell({
@@ -16,9 +16,7 @@ export function AuthShell({
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10">
       <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-        <div className="grid size-10 place-items-center rounded-xl bg-brand-gradient shadow-lg shadow-primary/30">
-          <Sparkles className="size-5 text-white" />
-        </div>
+        <AiBrainLogo size={40} />
         <span className="text-base font-semibold">AI Signal Pro</span>
       </Link>
       <div className="glass-strong rounded-3xl p-6">
