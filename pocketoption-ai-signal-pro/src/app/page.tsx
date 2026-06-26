@@ -2,13 +2,13 @@ import Link from 'next/link';
 import {
   Activity,
   ShieldCheck,
-  Sparkles,
   TrendingUp,
   LineChart,
   Layers,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AiBrainLogo } from '@/components/brand/ai-brain-logo';
 import { ComplianceDisclaimer } from '@/components/compliance-disclaimer';
 import { APP_NAME } from '@/lib/constants';
 
@@ -40,9 +40,7 @@ export default function LandingPage() {
     <main className="relative mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-10 pt-12">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="grid size-9 place-items-center rounded-xl bg-brand-gradient shadow-lg shadow-primary/30">
-            <Sparkles className="size-5 text-white" />
-          </div>
+          <AiBrainLogo size={36} />
           <span className="text-sm font-semibold">AI Signal Pro</span>
         </div>
         <Link href="/login">
